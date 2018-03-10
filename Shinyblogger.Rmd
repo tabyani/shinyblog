@@ -1,0 +1,104 @@
+---
+title: "shinyblog"
+author: "Omar Tabuni"
+date: "3/9/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Markdown
+
+This blog is about how crate a shiny app using cereal products.
+The graphs will illustrate the 
+Nutritional Correlation In Cereal Products: 
+between Micro and Macro Nutritions: 
+
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+First step is the UR.R 
+## UR.R
+```{r cars}
+library(shiny)
+library(rsconnect)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+ Define UI for application that draws a histogram
+  my_ui <- fluidPage(
+  
+  titlePanel("Nutrition Correlation In Cereal Products "),
+  
+  # Sidebar with a slider input for number of bins 
+  sidebarLayout(
+    sidebarPanel(
+     
+                   radioButtons("cereal", label = h3("Macronutrients "),
+                                choices = c("fat", "carbo", "protein", "sodium"),
+                                selected = "fat"),
+                   selectInput("select", label = h3("Micronutrients"), 
+                               choices = list("fiber", "vitamins", "sugars",  "potass"), 
+                               selected = 1),
+                  
+                   selectInput("background", label = h3("backround color"), 
+                              choices = list("grey", "yellow"), 
+                              selected = 1),
+                   hr(),
+                   fluidRow(column(3, verbatimTextOutput("value")))
+       
+    
+
+    ),
+    # Show a plot of the generated distribution
+    mainPanel( 
+      plotOutput("myPlot")
+      
+    )
+  )
+)
+
+shinyUI(my_ui)
+
+#hi
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+library(shiny)
+library(rsconnect)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+
+data1 <- read.csv("cereal.tsv", sep = "\t", header =TRUE)
+# Define server logic required to draw a histogram
+my_server <- function(input, output) {
+  output$myPlot <- renderPlot({
+    x <- input$select
+    y <- input$cereal
+
+    val1 <- select(data1, x)
+    val2 <- select(data1, y)
+    val3 <- input$background
+
+  ggplot((data=data1), aes(val1, val2)) + geom_point() + theme(plot.background = element_rect(fill = val3, colour = 'grey')) + xlab(x) + ylab(y)
+    
+  #output$value <- renderPrint({ input$radio })
+  #output$value <- renderPrint({ input$select })
+  
+ 
+
+    
+ 
+  
+})
+}
+shinyServer(my_server)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
